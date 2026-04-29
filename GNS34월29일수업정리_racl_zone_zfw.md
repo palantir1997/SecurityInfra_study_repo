@@ -369,3 +369,47 @@ zone-pair security IN_TO_OUT source INSIDE destination OUTSIDE
 
 ---
 
+RACL과 ZFW 이해하기 쉬운 팁을 정리해드릴게요! 🎯이제 RACL과 ZFW 개념을 시각적으로 설명하는 인터랙티브 가이드를 만들어줄게요.완벽한 인터랙티브 가이드를 만들었어요! 🎯
+
+**위 가이드에서 꼭 기억할 3가지:**
+
+## 📌 RACL 핵심
+```
+출발: R1 → R4 핑
+           ↓ "아, R1이 처음 시작했네" (Reflect에 기록)
+돌아옴: R4 → R1 응답
+           ↓ "맞다, 이건 기록된 세션이다!" (Evaluate 통과) ✅
+
+역방향: R4 → R1 핑 (처음 시도)
+           ↓ "R4가? 기록이 없는데?" (기록 없음) ❌ 차단!
+```
+
+**RACL은 "내부에서 시작한 것"만 기억합니다!**
+
+---
+
+## 📌 ZFW 핵심  
+```
+5단계 구성:
+1️⃣ Zone 만들기: inside, outside
+2️⃣ Zone-Pair: inside→outside 방향 정의
+3️⃣ Class-Map: HTTP인지 ICMP인지 분류
+4️⃣ Policy-Map: inspect/pass/drop 결정
+5️⃣ 적용: Zone-Pair에 정책 붙이기
+```
+
+**ZFW는 "이것은 HTTP"라고 명확히 판정한 후 정책을 적용합니다!**
+
+---
+
+## ⚡ 시험 팁
+
+**"반대 방향도 허용해야 한다"** → ZFW 선택! 🎯
+- RACL: 불가능 (내부에서만 시도 가능)
+- ZFW: 클래스맵 수정으로 가능
+
+**"이건 HTTP만, 저건 FTP만"** → ZFW! 🎯
+- RACL: 복잡 (포트로 일일이 분석)
+- ZFW: 클래스맵 2개 + 정책맵 수정으로 끝
+
+
