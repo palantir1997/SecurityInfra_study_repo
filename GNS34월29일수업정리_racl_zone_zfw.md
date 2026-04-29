@@ -369,7 +369,6 @@ zone-pair security IN_TO_OUT source INSIDE destination OUTSIDE
 
 ---
 
-RACL과 ZFW 이해하기 쉬운 팁을 정리해드릴게요! 🎯이제 RACL과 ZFW 개념을 시각적으로 설명하는 인터랙티브 가이드를 만들어줄게요.완벽한 인터랙티브 가이드를 만들었어요! 🎯
 
 **위 가이드에서 꼭 기억할 3가지:**
 
