@@ -1,0 +1,386 @@
+client
+sudo firewall-cmd --permanent --add-port=10050/tcp
+
+sudo firewall-cmd --reload
+
+sudo systemctl start zabbix-agent2
+
+sudo systemctl enable zabbix-agent2
+
+
+server 
+sudo firewall-cmd --permanent --add-port=10051/tcp
+
+sudo firewall-cmd --reload
+
+sudo systemctl start zabbix-agent2
+
+sudo systemctl enable zabbix-agent2
+
+sudo firewall-cmd --permanent --add-service=https
+
+sudo firewall-cmd --permanent --add-port=3306/tcp -> 끝나고 리로드
+
+sudo firewall-cmd --permanent --add-service=http
+sudo firewall-cmd --reload
+
+sudo systemctl restart zabbix-server
+
+sudo systemctl restart apache2
+
+sudo systemctl restart mariadb
+
+
+client
+
+--> sudo vi /etc/zabbix/zabbix_agent2.conf
+--> 여기들어가서 서버랑, 서버액티브랑, 호스트네임(db1)으로 변경하면 됨 앞선 아이피는 235로 서버단으로 맞추고!
+=> client
+sudo firewall-cmd --permanent --add-port=10050/tcp
+
+sudo firewall-cmd --reload
+
+sudo systemctl start zabbix-agent2
+
+sudo systemctl enable zabbix-agent2
+
+
+server 
+sudo firewall-cmd --permanent --add-port=10051/tcp
+
+sudo firewall-cmd --reload
+
+sudo systemctl start zabbix-agent2
+
+sudo systemctl enable zabbix-agent2
+
+sudo firewall-cmd --permanent --add-service=https
+
+sudo firewall-cmd --permanent --add-port=3306/tcp -> 끝나고 리로드
+
+sudo firewall-cmd --permanent --add-service=http
+sudo firewall-cmd --reload
+
+sudo systemctl restart zabbix-server
+
+sudo systemctl restart apache2
+
+sudo systemctl restart mariadb
+
+
+client
+
+--> sudo vi /etc/zabbix/zabbix_agent2.conf
+--> 여기들어가서 서버랑, 서버액티브랑, 호스트네임(db1)으로 변경하면 됨 앞선 아이피는 235로 서버단으로 맞추고!
+
+=> 즉, 서버(235번)에서는 10051번 포트를 열어서 에이전트들의 보고를 받아야 하고, 클라이언트(236번)에서는 10050번 포트를 열어서 서버의 질문에 응답해야 하는 구조입니다.
+
+
+그라파나랑 클릭하우스 말도 안되게 메모리 많이 잡아서 죽임
+
+
+## GNS3
+
+수업
+
+r1-> r2로 핑 때리는거 
+
+R1
+enable
+configure terminal
+interface fastEthernet 0/0
+ip address 10.10.10.1 255.255.255.0
+no shutdown
+exit
+
+R2
+enable
+configure terminal
+interface fastEthernet 0/0
+ip address 10.10.10.2 255.255.255.0
+no shutdown
+exit
+exit
+
+
+OSPF 설정 방법
+
+1. 각 라우터별 인터페이스 IP 설정 및 활성화
+먼저 모든 라우터가 서로 연결된 인터페이스에 IP를 주어야 합니다. (이미지 속 대역을 기준으로 작성했습니다.)
+
+R1 (f0/0 -> R2):
+conf t
+int f0/0
+ip add 10.10.10.1 255.255.255.0
+no shut
+exit
+
+
+R2 (f0/0 -> R1, f0/1 -> R3):
+conf t
+int f0/0
+ip add 10.10.10.2 255.255.255.0
+no shut
+int f0/1
+ip add 10.10.20.2 255.255.255.0
+no shut
+exit
+
+R3 (f0/1 -> R2, f0/0 -> R4):
+conf t
+int f0/1
+ip add 10.10.20.3 255.255.255.0
+no shut
+int f0/0
+ip add 10.10.30.3 255.255.255.0
+no shut
+exit
+
+
+R4 (f0/0 -> R3):
+conf t
+int f0/0
+ip add 10.10.30.4 255.255.255.0
+no shut
+exit
+
+OSPF 설정 (모든 라우터에서 반복)
+각 라우터의 설정 모드(conf t)에서 다음 명령어를 입력하여 네트워크를 광고합니다.
+
+R1: router ospf 1 -> network 10.10.10.0 0.0.0.255 area 0
+
+R2: router ospf 1 -> network 10.10.10.0 0.0.0.255 area 0 -> network 10.10.20.0 0.0.0.255 area 0
+
+R3: router ospf 1 -> network 10.10.20.0 0.0.0.255 area 0 -> network 10.10.30.0 0.0.0.255 area 0
+
+R4: router ospf 1 -> network 10.10.30.0 0.0.0.255 area 0
+
+
+1) 이웃 관계 확인 (모든 라우터에서):
+
+show ip ospf neighbor
+show ip route
+
+
+#######
+1. debug ip ?
+
+2. debug ip packet
+
+3. undebug all = u all 
+하면 다 꺼짐
+
+4. debug ip ospf ?
+
+5. debug ip ospf hello
+주고 받는 게 나옴
+
+6. reflect acl
+내부의 사용자들은 끊김없이 인터넷 사용 가능 외부에서는 어느 누구도 내부로 못들어오게 정책 설정
+
+R2에서
+ip access-list extended tcpes
+ 	r3-> r2로 오는 hello 패킷을 받을거임 따라서fa0/1
+permit ospf host 10.10.20.3 any
+
+permit tcp any any established
+exit
+
+do sh access-list
+
+R4에서
+enable password 1234
+line vty 0 4
+login
+password 1234
+ip http server
+
+R1에서
+telnet 10.10.30.4
+잘됨
+telnet 10.10.30.4 80
+사이트가 있다면 됨
+
+R2
+ip access-group tcpes in
+do sh access-list
+R1에서 핑을 쏠 때: R1의 핑 패킷이 R2를 거쳐 R3, R4로 갑니다.
+문제는 '응답(Reply)' 패킷: R4가 응답 패킷을 R3를 거쳐 R2의 f0/1로 보냅니다. 이때 R2는 이 패킷을 in 방향으로 검사합니다.
+
+no ip access-list extended tcpes
+no ip access-group tcpes in
+ip access-list extended racl
+permit tcp any any reflext racltest
+permit udp any any reflext racltest
+permit icmp any any reflext racltest
+exit
+ip access-list extended test
+permit ospf host 10.10.20.3 any
+evaluate racltest
+do sh access-list
+
+나가는 놈은 기억하고(Reflect), 들어오는 놈은 기억난 놈인지 확인(Evaluate)한다
+racl (나갈 때): 기록해두기 (Reflect)
+test (들어올 때): 기록 확인하기 (Evaluate)
+
+R1
+enable password 1234
+line vty 0 4
+login
+password 1234
+ip http server
+
+R2
+int fa0/3
+ip access-group racl out
+ip access-group test in
+
+r1, r4에서 핑 테스트 해보기 (r4에서는 핑이 안갈것)
+R1이 외부(R4)와 통신을 시작했기 때문에, R4가 R1을 향해 쏘는 패킷들은 '응답'으로 간주되어 R2의 방어벽을 프리패스로 통과하게 되는 것
+
+7. Dynamic acl
+위에서 했던 정책 다시 지우기!
+
+R2
+username est password 1234
+line vty 0 4
+login local
+autocommand access-enable host timeout 10
+ip access-list extended dacl
+permit ospf host 10.10.20.3 any
+permit tcp any host 10.10.20.2 eq telnet
+dynamic DACL permit ip any any
+ip access-group dacl in <- 이거하는 순간 통신 안됨 즉r4->r1 통신 안된단 소리
+
+r4-> r2 10.10.20.2 텔넷 접속하고 -> 다시 r1으로 핑 때리면 잘들어감
+==> 다시 작업 끝나면 acl지우기
+
+8. ZFW (Zone-Based Policy Firewall (ZBPF))
+1) 존생성
+2) 트래픽 방향 설정
+3) 트래픽 분류 지정
+4) 정책 설정
+5) 정책 적용
+
+R2
+zone security inside 
+~ outside 이와 같음
+zone-member security inside
+exit
+~ outside 이와 같음
+exit
+do sh zone security
+--> 같은 인사이드 존끼리 잘되고, 아웃사이드 존끼리 안됨!
+zone-pair security in-out source inside destination outside
+exit
+do sh zone-pair security
+ip access-list extended acltest
+permit ip any any
+exit
+class-map type inspect classtest
+mathch access-group name acltest
+exit
+
+match의 의미: "무엇을 기준으로 판단할 것인가?"
+class-map은 방화벽이 '어떤 패킷을 골라낼지' 기준을 세우는 곳입니다.
+match의 의미: "이 Class-map에 들어오는 패킷 중, 뒤에 나오는 조건(access-group)과 일치하는 것들만 분류하겠다"는 뜻입니다.
+
+policy-map type inspect policytest  -> r1->r4로 되게 하는거임 여기가!
+class type inspect classtest
+inspect
+exit
+zone-pair security in-out
+service-policy type inspect policytest
+# exit
+sh policy-map type inspect zone-pair sessions
+sh run
+
+inside에서 outside로 핑을 쏘세요.
+그 상태에서 show policy-map type inspect zone-pair sessions를 입력하세요.
+핑이 나가는 동안 여기에 세션 정보가 뜬다면? 성공입니다! 방화벽이 당신의 통신을 감시하고 있다는 뜻입니다.
+
+r4->r1으로 갈때 텔넷은 되게 해보자
+
+거꾸로 삭제해야함
+
+###########문제:
+
+
+
+### 1. R5 - R6 연결 (R4/R5/R6 구간 설정)
+R6에서 R5를 거쳐 내부망으로 통신이 가능하도록 하는 연결 설정입니다.
+
+
+! R5 인터페이스 설정 예시
+R5(config)# interface fa0/0
+R5(config-if)# ip address 10.10.50.5 255.255.255.0
+R5(config-if)# no shutdown
+
+! R6 인터페이스 설정
+R6(config)# interface fa0/0
+R6(config-if)# ip address 10.10.60.6 255.255.255.0
+R6(config-if)# no shutdown
+```
+
+### 2. R6 → R1 Any 허용 정책 (RACL)
+교수님께서 요구하신 "R6에서 R1으로의 모든 트래픽 허용(Any)"을 처리하기 위해, **방화벽(R3)**에서 R6의 접근을 허용하는 RACL(Router ACL)을 추가해야 합니다.
+
+```text
+! 방화벽 R3에서 R6의 접근을 허용하는 ACL 생성
+R3(config)# ip access-list extended R6_TO_R1_ANY
+R3(config-ext-nacl)# permit ip host 10.10.60.6 host 10.10.10.1
+R3(config-ext-nacl)# exit
+
+! 이 ACL을 기존 inspect 정책에 포함시키거나 별도 정책으로 적용
+R3(config)# class-map type inspect match-any R6_ALLOW_CLASS
+R3(config-cmap)# match access-group name R6_TO_R1_ANY
+R3(config-cmap)# exit
+
+R3(config)# policy-map type inspect HTTP_POLICY
+R3(config-pmap)# class type inspect R6_ALLOW_CLASS
+R3(config-pmap-c)# pass  <-- any 허용이므로 inspect 대신 pass 사용
+R3(config-pmap-c)# exit
+```
+
+### 3. 방화벽 R3 최종 통합 설정 (교수님 제출용)
+방금 추가한 R6 허용 정책과 기존의 3개 정책(HTTP/ICMP/Default Drop)을 모두 합친 R3 최종본입니다.
+
+```text
+! --- 1. 클래스 맵 통합 ---
+class-map type inspect match-any HTTP_CLASS
+ match protocol http
+ match access-group name HTTP_ONLY
+ match access-group name HTTP_ACL
+
+class-map type inspect match-all ICMP_CLASS
+ match access-group name ICMP_ACL
+
+class-map type inspect match-any R6_ALLOW_CLASS
+ match access-group name R6_TO_R1_ANY
+
+! --- 2. 정책 맵 통합 ---
+policy-map type inspect HTTP_POLICY
+ class type inspect R6_ALLOW_CLASS
+  pass
+ class type inspect HTTP_CLASS
+  inspect
+ class type inspect ICMP_CLASS
+  pass
+ class class-default
+  drop
+
+! --- 3. 존 페어 적용 ---
+zone-pair security IN_TO_OUT source INSIDE destination OUTSIDE
+ service-policy type inspect HTTP_POLICY
+```
+
+
+
+**정리하자면:**
+1.  **연결:** R5와 R6는 인터페이스 IP와 OSPF로 경로를 잡았습니다.
+2.  **RACL:** R6에서 R1으로 가는 트래픽은 `pass` 정책으로 1순위로 먼저 통과시켰습니다.
+3.  **정책:** 그다음 HTTP/ICMP를 검사하고, 나머지는 `drop`하여 교수님이 원하시는 3가지 정책을 모두 구현했습니다.
+
+
+
+
