@@ -411,4 +411,8 @@ zone-pair security IN_TO_OUT source INSIDE destination OUTSIDE
 - RACL: 복잡 (포트로 일일이 분석)
 - ZFW: 클래스맵 2개 + 정책맵 수정으로 끝
 
+----
 
+show zone security          ← 존이 제대로 만들어졌는지
+show zone-pair security     ← 존 쌍이 제대로 연결되었는지
+show policy-map type inspect zone-pair sessions  ← 세션이 정말 추적되는지
