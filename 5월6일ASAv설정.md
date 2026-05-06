@@ -1,6 +1,3 @@
-좋습니다! 여기 GitHub README 양식으로 정리한 내용입니다. 바로 복붙해서 사용하세요:
-
-```markdown
 # ASAv 방화벽 네트워크 설정 가이드
 
 ## 📌 목차
@@ -410,17 +407,6 @@ R#(config)# do show ip ospf neighbor # OSPF 이웃 확인
 
 ---
 
-## 📚 학습 체크리스트
-
-- [ ] OSPF 개념 이해 (Link State, 라우팅 광고)
-- [ ] 네트워크 토폴로지 파악
-- [ ] R1, R2, ASAv 기본 IP 설정
-- [ ] OSPF 라우팅 설정 및 이웃 확인
-- [ ] SSH/Telnet/HTTP 접근 제어 설정
-- [ ] ACL과 Security Level의 관계 이해
-- [ ] Inbound/Outbound 정책 차이 인식
-- [ ] Stateful Inspection의 필요성 이해
-- [ ] Management 인터페이스를 통한 원격 관리
 
 ---
 
