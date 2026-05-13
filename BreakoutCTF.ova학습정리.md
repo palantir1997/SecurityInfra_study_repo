@@ -78,7 +78,25 @@ cat rOOt.txt          # 🎉 플래그 획득
 
 ## 📸 실행 화면
 
-om/user-attachments/assets/de34ccdd-c187-4437-a66a-4dc83736dd73)
+<img width="678" height="443" alt="Image" src="https://github.com/user-attachments/assets/51e9013a-d413-4b08-bbf9-1346d183f4e2" />
+<img width="683" height="582" alt="Image" src="https://github.com/user-attachments/assets/633a147e-cbdb-46f6-88ef-88de44f4ca06" />
+
+<img width="677" height="237" alt="Image" src="https://github.com/user-attachments/assets/bde1fab0-3339-43d2-a123-f2a9dbfdae3e" />
+<img width="853" height="876" alt="Image" src="https://github.com/user-attachments/assets/f0b1873b-4f6b-4d4d-8d08-7aa8a622f6d8" />
+
+<img width="677" height="585" alt="Image" src="https://github.com/user-attachments/assets/b0ba1527-ee4f-4f8a-a72d-e008744692bd" />
+<img width="850" height="952" alt="Image" src="https://github.com/user-attachments/assets/c3cb34f4-7a0c-41f7-b280-923c9b5b4993" />
+
+<img width="832" height="972" alt="Image" src="https://github.com/user-attachments/assets/19da6a61-a6ca-4848-9464-41e96eee4541" />
+<img width="862" height="977" alt="Image" src="https://github.com/user-attachments/assets/4dfde00a-2175-4d2e-90f2-93fbc9764caa" />
+
+<img width="859" height="968" alt="Image" src="https://github.com/user-attachments/assets/acac8a2f-c257-4a9b-8024-0fbb08817c5b" />
+<img width="846" height="970" alt="Image" src="https://github.com/user-attachments/assets/f9a73b6b-ec5a-4986-a912-a30b7e4de4d1" />
+
+
+<img width="666" height="71" alt="Image" src="https://github.com/user-attachments/assets/e3747f19-840c-47c0-b2ad-803fc6bd1827" />
+<img width="658" height="528" alt="Image" src="https://github.com/user-attachments/assets/74373f53-7386-4766-9822-d8209f9ac359" />
+<img width="892" height="795" alt="Image" src="https://github.com/user-attachments/assets/de34ccdd-c187-4437-a66a-4dc83736dd73" />
 
 ---
 
