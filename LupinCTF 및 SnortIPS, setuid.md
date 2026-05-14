@@ -245,4 +245,3 @@ sudo /usr/bin/pip install $TF
 | `-sn` | Ping Scan | 생존 여부만 확인 (구버전 `-sP`) |
 | `-A` | Aggressive | OS/버전/스크립트/traceroute 통합 |
 | `-p-` | All Ports | 전체 65535 포트 스캔 |
-```
