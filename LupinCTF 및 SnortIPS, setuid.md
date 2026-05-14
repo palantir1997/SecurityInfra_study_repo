@@ -1,4 +1,3 @@
-```markdown
 # Security Lab TIL — 2025.05.14
 
 > Snort IPS 구성부터 CTF 권한 상승까지.
